@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
 import { 
   TextInput, 
@@ -24,6 +24,13 @@ const ProfileScreen = ({ navigation }) => {
     phone: '',
   });
   const [loading, setLoading] = useState(false);
+
+  // Input ref'leri
+  const nameRef = useRef(null);
+  const cityRef = useRef(null);
+  const occupationRef = useRef(null);
+  const ageRef = useRef(null);
+  const phoneRef = useRef(null);
 
   // Kullanıcı bilgilerini yükle
   useEffect(() => {
@@ -103,7 +110,7 @@ const ProfileScreen = ({ navigation }) => {
             onPress={() => navigation.goBack()}
             style={styles.backButton}
           />
-          <Title style={styles.headerTitle}>Profilim</Title>
+          <Title style={styles.headerTitle}>My Profile</Title>
         </View>
       </LinearGradient>
 
@@ -118,10 +125,14 @@ const ProfileScreen = ({ navigation }) => {
           </View>
 
           <TextInput
-            label="Ad Soyad"
+            ref={nameRef}
+            label="Full Name"
             value={profile.displayName}
             onChangeText={(text) => setProfile({ ...profile, displayName: text })}
             style={styles.input}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => cityRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -130,10 +141,14 @@ const ProfileScreen = ({ navigation }) => {
           />
 
           <TextInput
-            label="Şehir"
+            ref={cityRef}
+            label="City"
             value={profile.city}
             onChangeText={(text) => setProfile({ ...profile, city: text })}
             style={styles.input}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => occupationRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -142,10 +157,14 @@ const ProfileScreen = ({ navigation }) => {
           />
 
           <TextInput
-            label="Meslek"
+            ref={occupationRef}
+            label="Occupation"
             value={profile.occupation}
             onChangeText={(text) => setProfile({ ...profile, occupation: text })}
             style={styles.input}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => ageRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -154,11 +173,15 @@ const ProfileScreen = ({ navigation }) => {
           />
 
           <TextInput
-            label="Yaş"
+            ref={ageRef}
+            label="Age"
             value={profile.age}
             onChangeText={(text) => setProfile({ ...profile, age: text })}
             keyboardType="numeric"
             style={styles.input}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => phoneRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -167,11 +190,15 @@ const ProfileScreen = ({ navigation }) => {
           />
 
           <TextInput
-            label="Telefon"
+            ref={phoneRef}
+            label="Phone"
             value={profile.phone}
             onChangeText={(text) => setProfile({ ...profile, phone: text })}
             keyboardType="phone-pad"
             style={styles.input}
+            returnKeyType="done"
+            blurOnSubmit={true}
+            onSubmitEditing={() => phoneRef.current?.blur()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -186,7 +213,7 @@ const ProfileScreen = ({ navigation }) => {
             loading={loading}
             buttonColor="#001F3F"
           >
-            Kaydet
+            Save
           </Button>
 
           <Button 
@@ -196,7 +223,7 @@ const ProfileScreen = ({ navigation }) => {
             textColor="#001F3F"
             icon="lock-reset"
           >
-            Şifre Değiştir
+            Change Password
           </Button>
 
           <Button 
@@ -205,7 +232,7 @@ const ProfileScreen = ({ navigation }) => {
             style={styles.logoutButton}
             textColor="#f44336"
           >
-            Çıkış Yap
+            Logout
           </Button>
         </Surface>
       </View>

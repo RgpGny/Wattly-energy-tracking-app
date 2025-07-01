@@ -179,7 +179,7 @@ const InsightCard = ({ icon, title, description, color, onPress, delay }) => (
           <Title style={styles.insightCardTitle}>{title}</Title>
           <Text style={styles.insightCardDescription}>{description}</Text>
           <View style={styles.insightCardFooter}>
-            <Text style={styles.insightCardAction}>Detayları Gör</Text>
+            <Text style={styles.insightCardAction}>View Details</Text>
             <MaterialCommunityIcons name="arrow-right" size={20} color="#fff" />
           </View>
         </LinearGradient>
@@ -190,16 +190,16 @@ const InsightCard = ({ icon, title, description, color, onPress, delay }) => (
 
 const getConsumptionTitle = (period) => {
   switch(period) {
-    case 'day':
-      return 'Daily Consumption';
-    case 'week':
-      return 'Weekly Consumption';
-    case 'month':
-      return 'Monthly Consumption';
-    case 'year':
-      return 'Yearly Consumption';
-    default:
-      return 'Consumption';
+          case 'day':
+        return 'Daily Consumption';
+      case 'week':
+        return 'Weekly Consumption';
+      case 'month':
+        return 'Monthly Consumption';
+      case 'year':
+        return 'Yearly Consumption';
+      default:
+        return 'Consumption';
   }
 };
 
@@ -214,28 +214,50 @@ const HomeScreen = ({ navigation }) => {
     {
       id: 1,
       icon: 'lightbulb-on',
-      title: 'Akıllı Tasarruf',
-      description: 'Stand-by tüketimini %70 azaltın',
+              title: 'Smart Savings',
+      description: 'Reduce stand-by consumption by 70%',
       color: '#001F3F',
     },
     {
       id: 2,
       icon: 'chart-bell-curve',
-      title: 'Tüketim Analizi',
-      description: 'Geçen aya göre %15 tasarruf',
+              title: 'Consumption Analysis',
+              description: '15% savings compared to last month',
       color: '#00bcd4',
     },
   ]);
-  const [deviceCount, setDeviceCount] = useState(0);
   const [goalCount, setGoalCount] = useState(0);
-  const [instantConsumption, setInstantConsumption] = useState(0);
-  const [estimatedBill, setEstimatedBill] = useState(0);
-  const [dailyConsumption, setDailyConsumption] = useState(0);
   const [dailyGoalProgress, setDailyGoalProgress] = useState(0);
   const [dailyGoalTarget, setDailyGoalTarget] = useState(0);
-  const [periodConsumption, setPeriodConsumption] = useState(0);
-  const [periodCost, setPeriodCost] = useState(0);
-  const { energyStats } = useEnergy();
+  const { energyData } = useEnergy();
+  
+  // Period hesaplamaları (basit çarpanlar)
+  const getPeriodData = (period) => {
+    switch(period) {
+      case 'day':
+        return {
+          consumption: energyData.totalDaily,
+          cost: energyData.totalCost
+        };
+      case 'week':
+        return {
+          consumption: energyData.totalDaily * 7,
+          cost: energyData.totalCost * 7
+        };
+      case 'month':
+        return {
+          consumption: energyData.totalDaily * 30,
+          cost: energyData.totalCost * 30
+        };
+      case 'year':
+        return {
+          consumption: energyData.totalDaily * 365,
+          cost: energyData.totalCost * 365
+        };
+      default:
+        return { consumption: 0, cost: 0 };
+    }
+  };
   
   useFocusEffect(
     useCallback(() => {
@@ -250,65 +272,26 @@ const HomeScreen = ({ navigation }) => {
     if (!auth.currentUser) return;
     const userId = auth.currentUser.uid;
 
-    // Period'a göre tüketim ve maliyet değerlerini güncelle
-    switch(activeTab) {
-      case 'day':
-        setInstantConsumption(energyStats.daily);
-        setEstimatedBill(energyStats.daily * 2.5); // Birim fiyat 2.5 TL
-        setPeriodConsumption(energyStats.daily);
-        setPeriodCost(energyStats.daily * 2.5);
-        break;
-      case 'week':
-        setInstantConsumption(energyStats.weekly);
-        setEstimatedBill(energyStats.weekly * 2.5);
-        setPeriodConsumption(energyStats.weekly);
-        setPeriodCost(energyStats.weekly * 2.5);
-        break;
-      case 'month':
-        setInstantConsumption(energyStats.monthly);
-        setEstimatedBill(energyStats.monthly * 2.5);
-        setPeriodConsumption(energyStats.monthly);
-        setPeriodCost(energyStats.monthly * 2.5);
-        break;
-      case 'year':
-        setInstantConsumption(energyStats.yearly);
-        setEstimatedBill(energyStats.yearly * 2.5);
-        setPeriodConsumption(energyStats.yearly);
-        setPeriodCost(energyStats.yearly * 2.5);
-        break;
-    }
-  }, [activeTab, energyStats]); // energyStats'i dependency array'e ekleyin
-
-  useEffect(() => {
-    if (!auth.currentUser) return;
-    const userId = auth.currentUser.uid;
-
     // Sadece hedefler ve cihaz sayısı için dinleyici ekle
     const goalsRef = ref(db, `users/${userId}/goals`);
     const unsubscribeGoals = onValue(goalsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const dailyGoal = Object.values(data).find(goal => goal.period === 'Günlük');
+                    const dailyGoal = Object.values(data).find(goal => goal.period === 'Daily');
         if (dailyGoal) {
           setDailyGoalTarget(dailyGoal.target || 0);
+          // Progress'i gerçek veriye göre hesapla
+          const progress = energyData.totalDaily / dailyGoal.target;
+          setDailyGoalProgress(progress);
         }
         setGoalCount(Object.keys(data).length);
       }
     });
 
-    const cihazlarRef = ref(db, `users/${userId}/cihazlar`);
-    const unsubscribeDevices = onValue(cihazlarRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        setDeviceCount(Object.keys(data).length);
-      }
-    });
-
     return () => {
       unsubscribeGoals();
-      unsubscribeDevices();
     };
-  }, []);
+  }, [energyData.totalDaily]); // energyData.totalDaily dependency'si ekleyelim
 
   useEffect(() => {
     if (!auth.currentUser) return;
@@ -347,7 +330,7 @@ const HomeScreen = ({ navigation }) => {
               style={styles.avatar}
             />
             <View style={styles.userInfo}>
-              <Text style={styles.welcomeText}>Hoş geldin,</Text>
+              <Text style={styles.welcomeText}>Welcome,</Text>
               <Text style={styles.username}>{username}</Text>
             </View>
           </TouchableOpacity>
@@ -362,21 +345,30 @@ const HomeScreen = ({ navigation }) => {
     </Animated.View>
   );
 
-  const renderPeriodTabs = () => (
-    <View style={styles.periodTabs}>
-      {['day', 'week', 'month', 'year'].map((period) => (
-        <TouchableOpacity
-          key={period}
-          style={[styles.periodTab, activeTab === period && styles.activeTab]}
-          onPress={() => setActiveTab(period)}
-        >
-          <Text style={[styles.periodText, activeTab === period && styles.activeText]}>
-            {period.charAt(0).toUpperCase() + period.slice(1)}
-          </Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
+  const renderPeriodTabs = () => {
+    const periodLabels = {
+              day: 'Daily',
+        week: 'Weekly',
+        month: 'Monthly',
+        year: 'Yearly'
+    };
+
+    return (
+      <View style={styles.periodTabs}>
+        {['day', 'week', 'month', 'year'].map((period) => (
+          <TouchableOpacity
+            key={period}
+            style={[styles.periodTab, activeTab === period && styles.activeTab]}
+            onPress={() => setActiveTab(period)}
+          >
+            <Text style={[styles.periodText, activeTab === period && styles.activeText]}>
+              {periodLabels[period]}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -401,7 +393,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.statsGrid}>
             <EnhancedStatsCard
               title={getConsumptionTitle(activeTab)}
-              value={`${periodConsumption.toFixed(1)} kWh`}
+              value={`${getPeriodData(activeTab).consumption.toFixed(2).replace(/\.?0+$/, '')} kWh`}
               icon="flash"
               color="#001F3F"
               trend={dailyGoalTarget > 0 && activeTab === 'day' ? "up" : undefined}
@@ -410,8 +402,8 @@ const HomeScreen = ({ navigation }) => {
               delay={0}
             />
             <EnhancedStatsCard
-              title="Toplam Maliyet"
-              value={`${Math.round(periodCost)} ₺`}
+              title="Total Cost"
+              value={`${getPeriodData(activeTab).cost.toFixed(2).replace(/\.?0+$/, '')} ₺`}
               icon="currency-try"
               color="#00bcd4"
               trend={activeTab !== 'day' ? "up" : undefined}
@@ -438,21 +430,21 @@ const HomeScreen = ({ navigation }) => {
             {[
               {
                 icon: "chart-line",
-                title: "Enerji Takibi",
+                title: "Energy Tracking",
                 color: "#001F3F",
                 notifications: 0,
                 route: 'Dashboard'
               },
               {
                 icon: "devices",
-                title: "Cihazlarım",
+                title: "My Devices",
                 color: "#00bcd4",
-                notifications: deviceCount,
+                notifications: energyData.deviceCount,
                 route: 'CihazListesi'
               },
               {
                 icon: "target",
-                title: "Hedeflerim",
+                title: "My Goals",
                 color: "#4caf50",
                 notifications: goalCount,
                 route: 'Goals'
@@ -468,7 +460,7 @@ const HomeScreen = ({ navigation }) => {
           </View>
 
           <View style={styles.sectionHeader}>
-            <Title style={styles.sectionTitle}>Öneriler</Title>
+            <Title style={styles.sectionTitle}>Suggestions</Title>
           </View>
 
           <ScrollView 

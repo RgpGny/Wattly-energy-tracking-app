@@ -20,6 +20,7 @@ import { getCihazListesi } from '../services/firebaseService';
 import { auth, db } from '../firebaseConfig';
 import { ref, onValue } from 'firebase/database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useEnergy } from '../context/EnergyContext';
 
 const { width } = Dimensions.get('window');
 
@@ -56,7 +57,7 @@ const DeviceCard = ({ device, onPress, onLongPress }) => {
             {device.guc} Watt • Günlük {device.dailyUsage} saat
           </Text>
           <Text style={styles.consumptionText}>
-            Günlük Tüketim: {((device.guc * device.dailyUsage) / 1000).toFixed(2)} kWh
+            Daily Consumption: {((device.guc * device.dailyUsage) / 1000).toFixed(2)} kWh
           </Text>
         </View>
         <View style={styles.deviceStatus}>
@@ -77,6 +78,51 @@ const CihazListesiScreen = ({ navigation }) => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const { updateEnergyData } = useEnergy();
+
+  // Enerji hesaplamaları
+  const calculateEnergyStats = (deviceList) => {
+    const PRICE_PER_KWH = 2.5; // TL
+    const CO2_FACTOR = 0.52; // kg CO2 per kWh
+    
+    let totalDaily = 0;
+    let activeDeviceCount = 0;
+
+    deviceList.forEach(device => {
+      if (device.guc && device.dailyUsage) {
+        const powerInKW = parseFloat(device.guc) / 1000;
+        const hoursPerDay = parseFloat(device.dailyUsage);
+        const dailyKWh = powerInKW * hoursPerDay;
+        totalDaily += dailyKWh;
+        activeDeviceCount++;
+      }
+    });
+
+    const totalCost = totalDaily * PRICE_PER_KWH;
+    const co2Emission = totalDaily * CO2_FACTOR;
+    
+    // Basit tasarruf hesabı (ideal vs gerçek)
+    const idealConsumption = activeDeviceCount * 0.5; // Her cihaz için ideal 0.5 kWh
+    const savings = idealConsumption > 0 ? Math.max(0, ((idealConsumption - totalDaily) / idealConsumption) * 100) : 0;
+
+    const energyStats = {
+      totalDaily: totalDaily,
+      totalCost: totalCost,
+      deviceCount: deviceList.length,
+      co2Emission: co2Emission,
+      savings: savings
+    };
+
+    console.log('📱 CihazListesi hesapladı:', {
+      devices: deviceList.length,
+      totalDaily: totalDaily.toFixed(2) + ' kWh',
+      totalCost: totalCost.toFixed(2) + ' TL',
+      co2: co2Emission.toFixed(2) + ' kg',
+      savings: savings.toFixed(1) + '%'
+    });
+
+    return energyStats;
+  };
 
   useEffect(() => {
     const userId = auth.currentUser?.uid;
@@ -87,15 +133,20 @@ const CihazListesiScreen = ({ navigation }) => {
     
     const unsubscribe = onValue(cihazlarRef, (snapshot) => {
       const data = snapshot.val();
+      let deviceList = [];
+      
       if (data) {
-        const cihazList = Object.entries(data).map(([id, cihaz]) => ({
+        deviceList = Object.entries(data).map(([id, cihaz]) => ({
           id,
           ...cihaz,
         }));
-        setDevices(cihazList);
-      } else {
-        setDevices([]);
       }
+      
+      setDevices(deviceList);
+      
+      // Enerji hesaplamalarını yap ve context'e gönder
+      const energyStats = calculateEnergyStats(deviceList);
+      updateEnergyData(energyStats);
     });
 
     // Cleanup function
@@ -106,9 +157,7 @@ const CihazListesiScreen = ({ navigation }) => {
     device.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalConsumption = devices.reduce((total, device) => {
-    return total + (device.guc * device.dailyUsage) / 1000;
-  }, 0);
+  const { energyData } = useEnergy();
 
   const handleDevicePress = (device) => {
     // Cihaz detaylarına git
@@ -136,14 +185,14 @@ const CihazListesiScreen = ({ navigation }) => {
             onPress={() => navigation.goBack()}
             style={styles.backButton}
           />
-          <Title style={styles.headerTitle}>Cihazlarım</Title>
+          <Title style={styles.headerTitle}>My Devices</Title>
         </View>
       </LinearGradient>
 
       <View style={styles.searchContainer}>
         <Surface style={styles.searchSurface}>
           <Searchbar
-            placeholder="Cihazlarınızda arama yapın..."
+            placeholder="Search across your devices..."
             onChangeText={setSearchQuery}
             value={searchQuery}
             style={styles.searchbar}
@@ -181,13 +230,29 @@ const CihazListesiScreen = ({ navigation }) => {
         <Surface style={styles.statsCard}>
           <View style={styles.statsContent}>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>{devices.length}</Text>
-              <Text style={styles.statLabel}>Toplam Cihaz</Text>
+              <Text style={styles.statValue}>{energyData.deviceCount}</Text>
+              <Text style={styles.statLabel}>Total Devices</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>{totalConsumption.toFixed(2)} kWh</Text>
-              <Text style={styles.statLabel}>Günlük Tüketim</Text>
+              <Text style={styles.statValue}>
+                {energyData.totalDaily.toFixed(2).replace(/\.?0+$/, '')} kWh
+              </Text>
+              <Text style={styles.statLabel}>Daily Consumption</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>
+                {energyData.totalCost.toFixed(2).replace(/\.?0+$/, '')} ₺
+              </Text>
+              <Text style={styles.statLabel}>Günlük Maliyet</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>
+                {energyData.co2Emission.toFixed(1).replace(/\.?0+$/, '')} kg
+              </Text>
+              <Text style={styles.statLabel}>CO2 Emissions</Text>
             </View>
           </View>
         </Surface>
@@ -210,7 +275,7 @@ const CihazListesiScreen = ({ navigation }) => {
         color="white"
         backgroundColor="#001F3F"
         onPress={() => navigation.navigate('CihazEkle')}
-        label="Cihaz Ekle"
+        label="Add Device"
       />
 
       <Portal>

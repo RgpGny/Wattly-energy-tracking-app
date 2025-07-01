@@ -15,20 +15,20 @@ const WelcomeScreen = ({ navigation }) => {
   const features = [
     {
       icon: 'lightning-bolt',
-      title: 'Akıllı Takip',
-      description: 'Enerji tüketiminizi anlık olarak izleyin',
+      title: 'Smart Tracking',
+      description: 'Monitor your energy consumption in real-time',
       color: '#00BCD4'
     },
     {
       icon: 'chart-areaspline',
-      title: 'Detaylı Analiz',
-      description: 'Tüketim verilerinizi grafiklerle analiz edin',
+      title: 'Detailed Analysis',
+      description: 'Analyze your consumption data with charts',
       color: '#4CAF50'
     },
     {
       icon: 'wallet-outline',
-      title: 'Tasarruf Edin',
-      description: 'Akıllı önerilerle faturalarınızı azaltın',
+      title: 'Save Money',
+      description: 'Reduce your bills with smart recommendations',
       color: '#FF9800'
     }
   ];
@@ -74,7 +74,7 @@ const WelcomeScreen = ({ navigation }) => {
           </MotiView>
           <Text style={styles.title}>Wattly</Text>
           <Text style={styles.subtitle}>
-            Enerji tüketiminizi akıllıca yönetin
+            Manage your energy consumption smartly
           </Text>
         </MotiView>
 
@@ -93,7 +93,7 @@ const WelcomeScreen = ({ navigation }) => {
               contentStyle={styles.buttonContent}
               labelStyle={styles.buttonLabel}
             >
-              Giriş Yap
+              Login
             </Button>
             
             <Button
@@ -103,7 +103,7 @@ const WelcomeScreen = ({ navigation }) => {
               contentStyle={styles.buttonContent}
               labelStyle={[styles.buttonLabel, styles.registerLabel]}
             >
-              Hesap Oluştur
+              Sign Up
             </Button>
           </View>
         </View>

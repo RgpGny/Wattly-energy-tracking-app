@@ -1,4 +1,4 @@
-# ⚡ Wattly - Enerji Takip Uygulaması
+# ⚡ Wattly - Energy Tracking App
 
 <div align="center">
 
@@ -7,135 +7,135 @@
 ![Expo](https://img.shields.io/badge/Expo-53.0.15-black?style=for-the-badge&logo=expo)
 ![Firebase](https://img.shields.io/badge/Firebase-11.0.2-orange?style=for-the-badge&logo=firebase)
 
-**Modern ve kullanıcı dostu enerji tüketimi takip uygulaması** 🔋
+**Modern and user-friendly energy consumption tracking application** 🔋
 
-[Özellikler](#-özellikler) • [Teknolojiler](#-teknolojiler) • [Kurulum](#-kurulum) • [Kullanım](#-kullanım) • [Ekran Görüntüleri](#-ekran-görüntüleri) • [Katkıda Bulunma](#-katkıda-bulunma)
+[Features](#-features) • [Technologies](#-technologies) • [Installation](#-installation) • [Usage](#-usage) • [Screenshots](#-screenshots) • [Contributing](#-contributing)
 
 </div>
 
 ---
 
-## 📱 Uygulama Hakkında
+## 📱 About the App
 
-Wattly, kullanıcıların günlük enerji tüketimlerini takip etmelerini, cihazlarını yönetmelerini ve enerji tasarrufu hedefleri belirlemelerini sağlayan kapsamlı bir mobil uygulamadır. Modern UI/UX tasarımı, gerçek zamanlı analitikler ve sosyal özelliklerle donatılmıştır.
+Wattly is a comprehensive mobile application that allows users to track their daily energy consumption, manage their devices, and set energy saving goals. It's equipped with modern UI/UX design, real-time analytics, and social features.
 
-### 🎯 Ana Hedefler
-- 📊 **Enerji Tüketimi Takibi**: Günlük, haftalık, aylık ve yıllık tüketim analizleri
-- 💰 **Maliyet Hesaplama**: Enerji faturalarınızı tahmin edin
-- 🌱 **Çevre Dostu**: CO2 emisyonlarınızı takip edin
-- 🎯 **Hedef Belirleme**: Enerji tasarrufu hedefleri oluşturun
-- 👥 **Sosyal Özellikler**: Arkadaşlarınızla karşılaştırın ve paylaşın
-
----
-
-## ✨ Özellikler
-
-### 🔐 Kullanıcı Yönetimi
-- ✅ **Kayıt ve Giriş**: Güvenli Firebase Authentication
-- 👤 **Profil Yönetimi**: Kişisel bilgileri düzenleme
-- 🔒 **Şifre Değiştirme**: Güvenli şifre güncelleme
-- 🔄 **Otomatik Giriş**: Kalıcı oturum yönetimi
-
-### 📱 Ana Ekranlar
-- 🏠 **Ana Sayfa**: Genel istatistikler ve hızlı erişim
-- 📊 **Dashboard**: Detaylı analitikler ve grafikler
-- 📋 **Cihaz Listesi**: Tüm cihazlarınızı görüntüleyin
-- ➕ **Cihaz Ekleme**: Yeni cihaz ekleme ve düzenleme
-- 🎯 **Hedefler**: Enerji tasarrufu hedefleri
-- 👥 **Topluluk**: Diğer kullanıcılarla etkileşim
-- 💬 **Sohbet**: Arkadaşlarınızla mesajlaşın
-
-### 📈 Analitik Özellikler
-- 📊 **Gerçek Zamanlı Grafikler**: LineChart ile görsel analizler
-- 📅 **Zaman Aralığı Seçimi**: Günlük, haftalık, aylık, yıllık
-- 💡 **Cihaz Tipi Analizi**: Isıtma/Soğutma, Elektronik, Aydınlatma, Beyaz Eşya
-- 💰 **Maliyet Hesaplama**: Otomatik fatura tahmini
-- 🌍 **CO2 Takibi**: Çevresel etki analizi
-- 📈 **Trend Analizi**: Tüketim eğilimleri
-
-### 🔔 Bildirimler
-- ⏰ **Günlük Hatırlatmalar**: Kullanım takibi
-- ⚠️ **Yüksek Tüketim Uyarıları**: Limit aşımı bildirimleri
-- 🎯 **Hedef Hatırlatmaları**: Hedef takibi
-- 📱 **Push Notifications**: Expo Notifications entegrasyonu
-
-### 🎨 UI/UX Özellikleri
-- 🌈 **Modern Tasarım**: Material Design 3
-- ✨ **Animasyonlar**: Moti ve Reanimated ile akıcı geçişler
-- 🎭 **Gradient Efektler**: LinearGradient ile görsel zenginlik
-- 🌟 **Haptic Feedback**: Dokunsal geri bildirim
-- 🎨 **Tema Desteği**: Karanlık/Aydınlık tema
-- 📱 **Responsive Tasarım**: Tüm ekran boyutlarına uyum
+### 🎯 Main Goals
+- 📊 **Energy Consumption Tracking**: Daily, weekly, monthly, and yearly consumption analysis
+- 💰 **Cost Calculation**: Estimate your energy bills
+- 🌱 **Environmentally Friendly**: Track your CO2 emissions
+- 🎯 **Goal Setting**: Create energy saving goals
+- 👥 **Social Features**: Compare and share with friends
 
 ---
 
-## 🛠️ Teknolojiler
+## ✨ Features
+
+### 🔐 User Management
+- ✅ **Registration and Login**: Secure Firebase Authentication
+- 👤 **Profile Management**: Edit personal information
+- 🔒 **Password Change**: Secure password updates
+- 🔄 **Auto Login**: Persistent session management
+
+### 📱 Main Screens
+- 🏠 **Home**: General statistics and quick access
+- 📊 **Dashboard**: Detailed analytics and charts
+- 📋 **Device List**: View all your devices
+- ➕ **Add Device**: Add and edit new devices
+- 🎯 **Goals**: Energy saving goals
+- 👥 **Community**: Interact with other users
+- 💬 **Chat**: Message with friends
+
+### 📈 Analytics Features
+- 📊 **Real-time Charts**: Visual analysis with LineChart
+- 📅 **Time Range Selection**: Daily, weekly, monthly, yearly
+- 💡 **Device Type Analysis**: Heating/Cooling, Electronics, Lighting, White Goods
+- 💰 **Cost Calculation**: Automatic bill estimation
+- 🌍 **CO2 Tracking**: Environmental impact analysis
+- 📈 **Trend Analysis**: Consumption trends
+
+### 🔔 Notifications
+- ⏰ **Daily Reminders**: Usage tracking
+- ⚠️ **High Consumption Alerts**: Limit exceeded notifications
+- 🎯 **Goal Reminders**: Goal tracking
+- 📱 **Push Notifications**: Expo Notifications integration
+
+### 🎨 UI/UX Features
+- 🌈 **Modern Design**: Material Design 3
+- ✨ **Animations**: Smooth transitions with Moti and Reanimated
+- 🎭 **Gradient Effects**: Visual richness with LinearGradient
+- 🌟 **Haptic Feedback**: Tactile feedback
+- 🎨 **Theme Support**: Dark/Light theme
+- 📱 **Responsive Design**: Compatible with all screen sizes
+
+---
+
+## 🛠️ Technologies
 
 ### 📱 Frontend
-- **React Native** `0.79.4` - Cross-platform mobil geliştirme
-- **Expo** `53.0.15` - Geliştirme platformu ve araçları
-- **React** `19.0.0` - UI kütüphanesi
+- **React Native** `0.79.4` - Cross-platform mobile development
+- **Expo** `53.0.15` - Development platform and tools
+- **React** `19.0.0` - UI library
 
-### 🎨 UI/UX Kütüphaneleri
-- **React Native Paper** `5.12.5` - Material Design bileşenleri
-- **Moti** `0.29.0` - Animasyon kütüphanesi
-- **React Native Reanimated** `3.17.4` - Performanslı animasyonlar
-- **Lottie React Native** `7.2.2` - Vektör animasyonları
-- **React Native Shadow 2** `7.1.1` - Gölge efektleri
-- **Expo Linear Gradient** `14.0.1` - Gradient efektler
+### 🎨 UI/UX Libraries
+- **React Native Paper** `5.12.5` - Material Design components
+- **Moti** `0.29.0` - Animation library
+- **React Native Reanimated** `3.17.4` - Performance animations
+- **Lottie React Native** `7.2.2` - Vector animations
+- **React Native Shadow 2** `7.1.1` - Shadow effects
+- **Expo Linear Gradient** `14.0.1` - Gradient effects
 
-### 📊 Veri Görselleştirme
-- **React Native Chart Kit** `6.12.0` - Grafik bileşenleri
-- **Victory Native** `36.6.8` - İstatistik grafikleri
-- **React Native SVG** `15.11.2` - SVG desteği
+### 📊 Data Visualization
+- **React Native Chart Kit** `6.12.0` - Chart components
+- **Victory Native** `36.6.8` - Statistical charts
+- **React Native SVG** `15.11.2` - SVG support
 
-### 🔥 Backend & Veritabanı
-- **Firebase** `11.0.2` - Backend servisleri
-- **Firebase Admin** `13.0.2` - Sunucu tarafı yönetim
+### 🔥 Backend & Database
+- **Firebase** `11.0.2` - Backend services
+- **Firebase Admin** `13.0.2` - Server-side management
 - **Firebase Functions** `6.2.0` - Cloud Functions
 
-### 🔐 Kimlik Doğrulama
-- **Firebase Authentication** - Kullanıcı yönetimi
-- **AsyncStorage** `2.1.2` - Yerel veri saklama
+### 🔐 Authentication
+- **Firebase Authentication** - User management
+- **AsyncStorage** `2.1.2` - Local data storage
 
-### 🧭 Navigasyon
-- **React Navigation** `7.0.6` - Sayfa geçişleri
-- **React Navigation Stack** `7.0.0` - Stack navigasyon
-- **React Navigation Drawer** `7.0.11` - Drawer navigasyon
+### 🧭 Navigation
+- **React Navigation** `7.0.6` - Page transitions
+- **React Navigation Stack** `7.0.0` - Stack navigation
+- **React Navigation Drawer** `7.0.11` - Drawer navigation
 
-### 📅 Yardımcı Kütüphaneler
-- **Date-fns** `4.1.0` - Tarih işlemleri
-- **Axios** `1.7.7` - HTTP istekleri
-- **Expo Haptics** `14.0.0` - Dokunsal geri bildirim
-- **Expo Notifications** `0.31.3` - Bildirim yönetimi
+### 📅 Helper Libraries
+- **Date-fns** `4.1.0` - Date operations
+- **Axios** `1.7.7` - HTTP requests
+- **Expo Haptics** `14.0.0` - Tactile feedback
+- **Expo Notifications** `0.31.3` - Notification management
 
 ---
 
-## 🚀 Kurulum
+## 🚀 Installation
 
-### Ön Gereksinimler
-- Node.js (v16 veya üzeri)
-- npm veya yarn
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
 - Expo CLI
-- Android Studio (Android geliştirme için)
-- Xcode (iOS geliştirme için)
+- Android Studio (for Android development)
+- Xcode (for iOS development)
 
-### 1. Projeyi Klonlayın
+### 1. Clone the Project
 ```bash
 git clone https://github.com/RgpGny/Wattly-energy-tracking-app.git
 cd Wattly-energy-tracking-app
 ```
 
-### 2. Bağımlılıkları Yükleyin
+### 2. Install Dependencies
 ```bash
 npm install
-# veya
+# or
 yarn install
 ```
 
-### 3. Firebase Yapılandırması
-1. Firebase Console'da yeni bir proje oluşturun
-2. `.env` dosyası oluşturun ve Firebase bilgilerinizi ekleyin:
+### 3. Firebase Configuration
+1. Create a new project in Firebase Console
+2. Create a `.env` file and add your Firebase information:
 ```env
 EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
 EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
@@ -147,107 +147,138 @@ EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 EXPO_PUBLIC_FIREBASE_DATABASE_URL=your_database_url
 ```
 
-### 4. Uygulamayı Başlatın
+### 4. Start the App
 ```bash
-# Expo CLI ile
+# With Expo CLI
 expo start
 
-# veya npm ile
+# or with npm
 npm start
 ```
 
-### 5. Platform Seçimi
-- **Android**: `a` tuşuna basın veya `npm run android`
-- **iOS**: `i` tuşuna basın veya `npm run ios`
-- **Web**: `w` tuşuna basın veya `npm run web`
+### 5. Platform Selection
+- **Android**: Press `a` or run `npm run android`
+- **iOS**: Press `i` or run `npm run ios`
+- **Web**: Press `w` or run `npm run web`
 
 ---
 
-## 📖 Kullanım
+## 📖 Usage
 
-### 🏠 Ana Sayfa
-- Günlük enerji tüketimi istatistikleri
-- Hızlı erişim menüleri
-- Bildirim sayıları
-- Trend göstergeleri
+### 🏠 Home Screen
+- Daily energy consumption statistics
+- Quick access menus
+- Notification counts
+- Trend indicators
 
 ### 📊 Dashboard
-- Zaman aralığı seçimi (Günlük/Haftalık/Aylık/Yıllık)
-- Detaylı grafik analizleri
-- Cihaz tipi bazında tüketim
-- Maliyet ve CO2 hesaplamaları
+- Time range selection (Daily/Weekly/Monthly/Yearly)
+- Detailed chart analysis
+- Device type-based consumption
+- Cost and CO2 calculations
 
-### 📋 Cihaz Yönetimi
-- Cihaz ekleme ve düzenleme
-- Güç tüketimi ve kullanım süresi
-- Cihaz kategorileri
-- Günlük kullanım takibi
+### 📋 Device Management
+- Add and edit devices
+- Power consumption and usage time
+- Device categories
+- Daily usage tracking
 
-### 🎯 Hedef Belirleme
-- Enerji tasarrufu hedefleri
-- İlerleme takibi
-- Hatırlatmalar
-- Başarı kutlamaları
+### 🎯 Goal Setting
+- Energy saving goals
+- Progress tracking
+- Reminders
+- Success celebrations
 
-### 👥 Sosyal Özellikler
-- Arkadaş ekleme
-- Mesajlaşma
-- Topluluk paylaşımları
-- Karşılaştırma tabloları
+### 👥 Social Features
+- Add friends
+- Messaging
+- Community sharing
+- Comparison tables
 
 ---
 
-## 📱 Ekran Görüntüleri
+## 📱 Screenshots
+
+### 🔐 Authentication & Welcome
+<div align="center">
+  <img src="src/assets/screenshots/01-welcome.jpg" width="200" alt="Welcome Screen" />
+  <img src="src/assets/screenshots/02-login.jpg" width="200" alt="Login Screen" />
+  <img src="src/assets/screenshots/03-register.jpg" width="200" alt="Register Screen" />
+</div>
+
+### 🏠 Main Screens
+<div align="center">
+  <img src="src/assets/screenshots/04-home.jpg" width="200" alt="Home Screen" />
+  <img src="src/assets/screenshots/07-energy-tracking.jpg" width="200" alt="Energy Tracking" />
+  <img src="src/assets/screenshots/10-profile.jpg" width="200" alt="Profile Screen" />
+</div>
+
+### 📱 Device Management
+<div align="center">
+  <img src="src/assets/screenshots/05-devices.jpg" width="200" alt="Device List" />
+  <img src="src/assets/screenshots/06-add-device.jpg" width="200" alt="Add Device" />
+</div>
+
+### 🎯 Goal Management
+<div align="center">
+  <img src="src/assets/screenshots/08-goals.jpg" width="200" alt="Goals Screen" />
+  <img src="src/assets/screenshots/09-add-goal.jpg" width="200" alt="Add Goal" />
+</div>
+
+### ⚙️ Settings
+<div align="center">
+  <img src="src/assets/screenshots/11-change-password.jpg" width="200" alt="Change Password" />
+</div>
 
 <div align="center">
 
-| Ana Sayfa | Dashboard | Cihaz Listesi |
-|-----------|-----------|---------------|
-| ![Ana Sayfa](assets/screenshots/home.png) | ![Dashboard](assets/screenshots/dashboard.png) | ![Cihaz Listesi](assets/screenshots/devices.png) |
+| Home Screen | Dashboard | Device List |
+|-------------|-----------|-------------|
+| ![Home Screen](assets/screenshots/home.png) | ![Dashboard](assets/screenshots/dashboard.png) | ![Device List](assets/screenshots/devices.png) |
 
-| Giriş | Profil | Hedefler |
-|-------|--------|----------|
-| ![Giriş](assets/screenshots/login.png) | ![Profil](assets/screenshots/profile.png) | ![Hedefler](assets/screenshots/goals.png) |
+| Login | Profile | Goals |
+|-------|---------|-------|
+| ![Login](assets/screenshots/login.png) | ![Profile](assets/screenshots/profile.png) | ![Goals](assets/screenshots/goals.png) |
 
 </div>
 
 ---
 
-## 🏗️ Proje Yapısı
+## 🏗️ Project Structure
 
 ```
 Wattly-energy-tracking-app/
 ├── src/
-│   ├── components/          # Yeniden kullanılabilir bileşenler
-│   ├── screens/            # Uygulama ekranları
-│   ├── services/           # API ve Firebase servisleri
+│   ├── components/          # Reusable components
+│   ├── screens/            # App screens
+│   ├── services/           # API and Firebase services
 │   ├── context/            # React Context
-│   ├── utils/              # Yardımcı fonksiyonlar
-│   ├── assets/             # Resimler ve animasyonlar
-│   ├── style/              # Stil dosyaları
-│   └── firebaseConfig.js   # Firebase yapılandırması
+│   ├── utils/              # Helper functions
+│   ├── assets/             # Images and animations
+│   ├── style/              # Style files
+│   └── firebaseConfig.js   # Firebase configuration
 ├── assets/                 # Expo assets
-├── .env                    # Çevresel değişkenler
-├── .gitignore             # Git ignore dosyası
-└── README.md              # Bu dosya
+├── .env                    # Environment variables
+├── .gitignore             # Git ignore file
+└── README.md              # This file
 ```
 
 ---
 
-## 🔧 Geliştirme
+## 🔧 Development
 
-### Kod Stili
-- ESLint ve Prettier kullanılıyor
-- Component-based mimari
-- Functional components ve hooks
-- TypeScript desteği (gelecek sürümlerde)
+### Code Style
+- Using ESLint and Prettier
+- Component-based architecture
+- Functional components and hooks
+- TypeScript support (in future versions)
 
-### Test
+### Testing
 ```bash
-# Testleri çalıştır
+# Run tests
 npm test
 
-# Coverage raporu
+# Coverage report
 npm run test:coverage
 ```
 
@@ -265,29 +296,29 @@ expo build:web
 
 ---
 
-## 🤝 Katkıda Bulunma
+## 🤝 Contributing
 
-1. Bu repository'yi fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request oluşturun
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
 
-### Katkı Rehberi
-- Kod standartlarına uyun
-- Test yazın
-- README'yi güncelleyin
-- Commit mesajlarını açıklayıcı yazın
-
----
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
+### Contribution Guidelines
+- Follow code standards
+- Write tests
+- Update README
+- Write descriptive commit messages
 
 ---
 
-## 👨‍💻 Geliştirici
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Developer
 
 **Ragıp Günay**
 
@@ -296,20 +327,20 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICE
 
 ---
 
-## 🙏 Teşekkürler
+## 🙏 Acknowledgments
 
-- [Expo](https://expo.dev/) - Harika geliştirme platformu
-- [Firebase](https://firebase.google.com/) - Güçlü backend servisleri
-- [React Native](https://reactnative.dev/) - Cross-platform geliştirme
-- [React Navigation](https://reactnavigation.org/) - Navigasyon çözümü
-- [React Native Paper](https://callstack.github.io/react-native-paper/) - UI bileşenleri
+- [Expo](https://expo.dev/) - Amazing development platform
+- [Firebase](https://firebase.google.com/) - Powerful backend services
+- [React Native](https://reactnative.dev/) - Cross-platform development
+- [React Navigation](https://reactnavigation.org/) - Navigation solution
+- [React Native Paper](https://callstack.github.io/react-native-paper/) - UI components
 
 ---
 
 <div align="center">
 
-⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
+⭐ Don't forget to star this project if you liked it!
 
-[GitHub'da Görüntüle](https://github.com/RgpGny/Wattly-energy-tracking-app)
+[View on GitHub](https://github.com/RgpGny/Wattly-energy-tracking-app)
 
 </div> 

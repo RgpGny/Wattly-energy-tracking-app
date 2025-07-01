@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { IconButton } from 'react-native-paper';
 
 const NavigationButtons = ({ navigation, showBack = true, showClose }) => {
@@ -9,7 +9,9 @@ const NavigationButtons = ({ navigation, showBack = true, showClose }) => {
         {showBack && (
           <IconButton
             icon="arrow-left"
-            size={24}
+            size={28}
+            iconColor="#001F3F"
+            style={styles.backButton}
             onPress={() => navigation.goBack()}
           />
         )}
@@ -30,12 +32,13 @@ const NavigationButtons = ({ navigation, showBack = true, showClose }) => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 0,
+    top: Platform.OS === 'ios' ? 55 : 35,
     left: 0,
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     zIndex: 1000,
   },
   leftButton: {
@@ -43,6 +46,18 @@ const styles = StyleSheet.create({
   },
   rightButton: {
     alignSelf: 'flex-end',
+  },
+  backButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    margin: 0,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
 

@@ -79,7 +79,10 @@ const ChatScreen = ({ route, navigation }) => {
           style={styles.input}
           value={newMessage}
           onChangeText={setNewMessage}
-          placeholder="Mesajınızı yazın..."
+          placeholder="Type your message..."
+          returnKeyType="send"
+          blurOnSubmit={false}
+          onSubmitEditing={handleSend}
         />
         <Button mode="contained" onPress={handleSend}>
           Gönder

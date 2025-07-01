@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, ScrollView, StyleSheet, StatusBar } from 'react-native';
 import { 
   TextInput, 
@@ -23,16 +23,20 @@ const HedefEkleScreen = ({ navigation, route }) => {
   const [hedef, setHedef] = useState({
     title: editingGoal?.title || '',
     target: editingGoal?.target?.toString() || '',
-    period: editingGoal?.period || 'Aylık',
+    period: editingGoal?.period || 'Monthly',
     icon: editingGoal?.icon || 'target',
     current: editingGoal?.current || 0
   });
   const [errors, setErrors] = useState({});
 
+  // Input ref'leri
+  const titleRef = useRef(null);
+  const targetRef = useRef(null);
+
   const validateForm = () => {
     const newErrors = {};
-    if (!hedef.title.trim()) newErrors.title = 'Hedef adı gerekli';
-    if (!hedef.target || hedef.target <= 0) newErrors.target = 'Geçerli bir hedef değeri girin';
+    if (!hedef.title.trim()) newErrors.title = 'Goal name is required';
+    if (!hedef.target || hedef.target <= 0) newErrors.target = 'Enter a valid target value';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -95,7 +99,7 @@ const HedefEkleScreen = ({ navigation, route }) => {
             style={styles.backButton}
           />
           <Title style={styles.headerTitle}>
-            {editingGoal ? 'Hedefi Düzenle' : 'Yeni Hedef Ekle'}
+            {editingGoal ? 'Edit Goal' : 'Add New Goal'}
           </Title>
         </View>
       </LinearGradient>
@@ -103,11 +107,15 @@ const HedefEkleScreen = ({ navigation, route }) => {
       <ScrollView style={styles.content}>
         <Surface style={styles.formCard}>
           <TextInput
-            label="Hedef Adı"
+            ref={titleRef}
+            label="Goal Name"
             value={hedef.title}
             onChangeText={(text) => setHedef({ ...hedef, title: text })}
             style={styles.input}
             error={!!errors.title}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => targetRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -119,12 +127,16 @@ const HedefEkleScreen = ({ navigation, route }) => {
           </HelperText>
 
           <TextInput
-            label="Hedef Tüketim (kWh)"
+            ref={targetRef}
+            label="Target Consumption (kWh)"
             value={hedef.target.toString()}
             onChangeText={(text) => setHedef({ ...hedef, target: text })}
             keyboardType="numeric"
             style={styles.input}
             error={!!errors.target}
+            returnKeyType="done"
+            blurOnSubmit={true}
+            onSubmitEditing={() => targetRef.current?.blur()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -135,15 +147,15 @@ const HedefEkleScreen = ({ navigation, route }) => {
             {errors.target}
           </HelperText>
 
-          <Title style={styles.sectionTitle}>Hedef Süresi</Title>
+          <Title style={styles.sectionTitle}>Goal Period</Title>
           <SegmentedButtons
             value={hedef.period}
             onValueChange={(value) => setHedef({ ...hedef, period: value })}
             buttons={[
-              { value: 'Günlük', label: 'Günlük' },
-              { value: 'Haftalık', label: 'Haftalık' },
-              { value: 'Aylık', label: 'Aylık' },
-              { value: 'Yıllık', label: 'Yıllık' }
+              { value: 'Daily', label: 'Daily' },
+              { value: 'Weekly', label: 'Weekly' },
+              { value: 'Monthly', label: 'Monthly' },
+              { value: 'Yearly', label: 'Yearly' }
             ]}
             style={styles.segmentedButtons}
             theme={{
@@ -162,7 +174,7 @@ const HedefEkleScreen = ({ navigation, route }) => {
             style={styles.saveButton}
             buttonColor="#001F3F"
           >
-            {editingGoal ? 'Güncelle' : 'Kaydet'}
+            {editingGoal ? 'Update' : 'Save'}
           </Button>
 
           {editingGoal && (
@@ -172,7 +184,7 @@ const HedefEkleScreen = ({ navigation, route }) => {
               style={styles.deleteButton}
               textColor="#f44336"
             >
-              Hedefi Sil
+              Delete Goal
             </Button>
           )}
         </View>
@@ -183,18 +195,18 @@ const HedefEkleScreen = ({ navigation, route }) => {
           visible={deleteDialogVisible}
           onDismiss={() => setDeleteDialogVisible(false)}
         >
-          <Dialog.Title>Hedefi Sil</Dialog.Title>
+          <Dialog.Title>Delete Goal</Dialog.Title>
           <Dialog.Content>
-            <Text>Bu hedefi silmek istediğinizden emin misiniz?</Text>
-            <Text style={styles.warningText}>Bu işlem geri alınamaz.</Text>
+            <Text>Are you sure you want to delete this goal?</Text>
+            <Text style={styles.warningText}>This action cannot be undone.</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setDeleteDialogVisible(false)}>İptal</Button>
+            <Button onPress={() => setDeleteDialogVisible(false)}>Cancel</Button>
             <Button 
               onPress={handleDelete}
               textColor="#f44336"
             >
-              Sil
+              Delete
             </Button>
           </Dialog.Actions>
         </Dialog>

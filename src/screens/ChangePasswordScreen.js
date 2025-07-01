@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
 import { 
   TextInput, 
@@ -21,6 +21,11 @@ const ChangePasswordScreen = ({ navigation }) => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  // Input ref'leri
+  const currentPasswordRef = useRef(null);
+  const newPasswordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
 
   const validateForm = () => {
     const newErrors = {};
@@ -78,7 +83,7 @@ const ChangePasswordScreen = ({ navigation }) => {
             onPress={() => navigation.goBack()}
             style={styles.backButton}
           />
-          <Title style={styles.headerTitle}>Şifre Değiştir</Title>
+          <Title style={styles.headerTitle}>Change Password</Title>
         </View>
       </LinearGradient>
 
@@ -92,17 +97,21 @@ const ChangePasswordScreen = ({ navigation }) => {
               style={styles.lockIcon}
             />
             <Text style={styles.subtitle}>
-              Güvenliğiniz için güçlü bir şifre seçin
+              Choose a strong password for your security
             </Text>
           </View>
 
           <TextInput
-            label="Mevcut Şifre"
+            ref={currentPasswordRef}
+            label="Current Password"
             value={passwords.currentPassword}
             onChangeText={(text) => setPasswords({ ...passwords, currentPassword: text })}
             secureTextEntry
             style={styles.input}
             error={!!errors.currentPassword}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => newPasswordRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -114,12 +123,16 @@ const ChangePasswordScreen = ({ navigation }) => {
           </HelperText>
 
           <TextInput
-            label="Yeni Şifre"
+            ref={newPasswordRef}
+            label="New Password"
             value={passwords.newPassword}
             onChangeText={(text) => setPasswords({ ...passwords, newPassword: text })}
             secureTextEntry
             style={styles.input}
             error={!!errors.newPassword}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => confirmPasswordRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -131,12 +144,16 @@ const ChangePasswordScreen = ({ navigation }) => {
           </HelperText>
 
           <TextInput
-            label="Yeni Şifre (Tekrar)"
+            ref={confirmPasswordRef}
+            label="Confirm New Password"
             value={passwords.confirmPassword}
             onChangeText={(text) => setPasswords({ ...passwords, confirmPassword: text })}
             secureTextEntry
             style={styles.input}
             error={!!errors.confirmPassword}
+            returnKeyType="done"
+            blurOnSubmit={true}
+            onSubmitEditing={() => confirmPasswordRef.current?.blur()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -154,7 +171,7 @@ const ChangePasswordScreen = ({ navigation }) => {
             loading={loading}
             buttonColor="#001F3F"
           >
-            Şifreyi Değiştir
+            Change Password
           </Button>
         </Surface>
       </View>

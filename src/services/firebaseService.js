@@ -308,7 +308,6 @@ export const saveCihaz = async (cihazData, cihazId = null) => {
     
     // Aktif cihazlar listesine kaydet
     const cihazlarRef = ref(db, `users/${userId}/cihazlar`);
-    const dailyRef = ref(db, `users/${userId}/cihazlar_gunluk/${currentDate}/cihazlar`);
     
     if (cihazId) {
       // Güncelleme

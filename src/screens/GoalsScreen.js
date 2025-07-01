@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, StyleSheet, Dimensions, TouchableOpacity, StatusBar } from 'react-native';
 import { 
   Card, 
@@ -15,19 +15,48 @@ import {
   Menu
 } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
-import NavigationButtons from '../components/NavigationButtons';
 import { auth, db } from '../firebaseConfig';
 import { ref, onValue, set, update } from 'firebase/database';
 import { sendGoalWarningNotification, registerForPushNotificationsAsync } from '../services/notificationService';
 import { checkAndCleanExpiredGoals } from '../services/firebaseService';
+import { useEnergy } from '../context/EnergyContext';
 
 const { width } = Dimensions.get('window');
 
 const GoalCard = ({ goal, onPress }) => {
-  const current = Number(goal.current || 0);
+  const { energyData } = useEnergy();
+  
+  // Period'a göre current değerini hesapla
+  let current = 0;
+  switch(goal.period) {
+    case 'Daily':
+      current = energyData.totalDaily;
+      break;
+    case 'Weekly':
+      current = energyData.totalDaily * 7;
+      break;
+    case 'Monthly':
+      current = energyData.totalDaily * 30;
+      break;
+    case 'Yearly':
+      current = energyData.totalDaily * 365;
+      break;
+    default:
+      current = Number(goal.current || 0);
+  }
+
   const target = Number(goal.target || 0);
   const remaining = Math.max(0, target - current);
-  const progress = (current / target) * 100;
+  const progress = target > 0 ? (current / target) * 100 : 0;
+
+  console.log('🎯 GoalCard debug:', { 
+    goalPeriod: goal.period, 
+    totalDaily: energyData.totalDaily.toFixed(2) + ' kWh',
+    current: current.toFixed(2) + ' kWh', 
+    target: target.toFixed(1) + ' kWh', 
+    progress: progress.toFixed(2) + '%',
+    progressWidth: Math.max(2, Math.min(100, progress)).toFixed(1) + '%'
+  }); // Debug
   
   useEffect(() => {
     const checkAndNotify = async () => {
@@ -74,10 +103,10 @@ const GoalCard = ({ goal, onPress }) => {
         <View style={styles.goalProgress}>
           <View style={styles.progressValues}>
             <Text style={styles.currentValue}>
-              {current.toFixed(1)} kWh
+              {current.toFixed(2).replace(/\.?0+$/, '')} kWh
             </Text>
             <Text style={styles.targetValue}>
-              {target.toFixed(1)} kWh
+              {target.toFixed(0)} kWh
             </Text>
           </View>
           
@@ -86,8 +115,10 @@ const GoalCard = ({ goal, onPress }) => {
               style={[
                 styles.progressFill, 
                 { 
-                  width: `${Math.min(100, (current / target) * 100)}%`,
-                  backgroundColor: current > target ? '#f44336' : '#4CAF50'
+                  width: `${Math.max(2, Math.min(100, progress))}%`, // Min %2 genişlik
+                  backgroundColor: progress >= 100 ? '#f44336' : 
+                                 progress >= 80 ? '#ff9800' : 
+                                 progress >= 60 ? '#ffc107' : '#4CAF50'
                 }
               ]} 
             />
@@ -95,8 +126,8 @@ const GoalCard = ({ goal, onPress }) => {
 
           <Text style={styles.remainingText}>
             {remaining > 0 
-              ? `Hedefe ${remaining.toFixed(1)} kWh kaldı`
-              : 'Hedef aşıldı!'
+              ? `Remaining ${remaining.toFixed(2).replace(/\.?0+$/, '')} kWh`
+              : 'Goal exceeded!'
             }
           </Text>
         </View>
@@ -107,7 +138,7 @@ const GoalCard = ({ goal, onPress }) => {
             <Text style={styles.statValue}>
               %{Math.round(Math.max(0, Math.min(100, ((target - current) / target) * 100)))}
             </Text>
-            <Text style={styles.statLabel}>Tasarruf</Text>
+            <Text style={styles.statLabel}>Savings</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
@@ -115,7 +146,7 @@ const GoalCard = ({ goal, onPress }) => {
             <Text style={styles.statValue}>
               {Math.round(remaining * 1.5)} ₺
             </Text>
-            <Text style={styles.statLabel}>Potansiyel</Text>
+            <Text style={styles.statLabel}>Potential</Text>
           </View>
         </View>
       </Surface>
@@ -125,17 +156,21 @@ const GoalCard = ({ goal, onPress }) => {
 
 const GoalsScreen = ({ navigation }) => {
   const [goals, setGoals] = useState([]);
-  const [dailyConsumption, setDailyConsumption] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [newGoal, setNewGoal] = useState({
     title: '',
     target: '',
-    period: 'Aylık'
+    period: 'Monthly'
   });
 
+  // Dialog input ref'leri
+  const dialogTitleRef = useRef(null);
+  const dialogTargetRef = useRef(null);
   useEffect(() => {
     if (!auth.currentUser) return;
     const userId = auth.currentUser.uid;
+    setIsLoading(true);
 
     // İlk açılışta süresi dolan hedefleri kontrol et
     checkAndCleanExpiredGoals();
@@ -153,69 +188,7 @@ const GoalsScreen = ({ navigation }) => {
       } else {
         setGoals([]);
       }
-    });
-
-    // Günlük cihaz verilerini dinle ve hedefleri güncelle
-    const currentDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    const dailyRef = ref(db, `users/${userId}/cihazlar_gunluk/${currentDate}/cihazlar`);
-    const unsubscribeDaily = onValue(dailyRef, async (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Günlük toplam tüketimi hesapla
-        const total = Object.values(data).reduce((sum, device) => {
-          const powerInKW = device.guc / 1000; // Watt'ı kW'a çevir
-          const dailyKWh = powerInKW * (device.dailyUsage || 0);
-          return sum + dailyKWh;
-        }, 0);
-        setDailyConsumption(total);
-
-        // Günlük hedefleri güncelle
-        goals.forEach(async (goal) => {
-          if (goal.period === 'Günlük') {
-            const goalRef = ref(db, `users/${userId}/goals/${goal.id}`);
-            await update(goalRef, { current: total });
-          }
-        });
-      } else {
-        setDailyConsumption(0);
-        // Günlük hedefleri sıfırla
-        goals.forEach(async (goal) => {
-          if (goal.period === 'Günlük') {
-            const goalRef = ref(db, `users/${userId}/goals/${goal.id}`);
-            await update(goalRef, { current: 0 });
-          }
-        });
-      }
-    });
-
-    // Aktif cihazları dinle ve günlük hedefleri güncelle
-    const cihazlarRef = ref(db, `users/${userId}/cihazlar`);
-    const unsubscribeCihazlar = onValue(cihazlarRef, async (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Anlık toplam tüketimi hesapla
-        const total = Object.values(data).reduce((sum, device) => {
-          const powerInKW = device.guc / 1000;
-          const dailyKWh = powerInKW * (device.dailyUsage || 0);
-          return sum + dailyKWh;
-        }, 0);
-
-        // Günlük hedefleri güncelle
-        goals.forEach(async (goal) => {
-          if (goal.period === 'Günlük') {
-            const goalRef = ref(db, `users/${userId}/goals/${goal.id}`);
-            await update(goalRef, { current: total });
-          }
-        });
-      } else {
-        // Cihaz yoksa günlük hedefleri sıfırla
-        goals.forEach(async (goal) => {
-          if (goal.period === 'Günlük') {
-            const goalRef = ref(db, `users/${userId}/goals/${goal.id}`);
-            await update(goalRef, { current: 0 });
-          }
-        });
-      }
+      setIsLoading(false);
     });
 
     // Bildirim izinlerini kontrol et
@@ -227,24 +200,27 @@ const GoalsScreen = ({ navigation }) => {
 
     return () => {
       unsubscribeGoals();
-      unsubscribeDaily();
-      unsubscribeCihazlar();
     };
   }, []);
 
   const handleAddGoal = async () => {
     if (!newGoal.title || !newGoal.target) return;
 
-    const goalsRef = ref(db, `users/${auth.currentUser.uid}/goals`);
+    const userId = auth.currentUser.uid;
+    const goalsRef = ref(db, `users/${userId}/goals`);
+    const newGoalRef = push(goalsRef);
+    
     const newGoalData = {
-      ...newGoal,
-      current: 0,
-      icon: 'target',
+      title: newGoal.title,
       target: parseFloat(newGoal.target),
-      createdAt: Date.now()
+      period: newGoal.period,
+      current: 0, // Başlangıçta 0, GoalCard'da gerçek zamanlı hesaplanacak
+      icon: 'target',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
     };
 
-    await set(goalsRef, [...goals, newGoalData]);
+    await set(newGoalRef, newGoalData);
     setDialogVisible(false);
     setNewGoal({ title: '', target: '', period: 'Aylık' });
   };
@@ -255,13 +231,22 @@ const GoalsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <NavigationButtons navigation={navigation} />
+      <StatusBar barStyle="light-content" backgroundColor="#001F3F" />
       
       <LinearGradient
         colors={['#001F3F', '#002c5c']}
         style={styles.header}
       >
-        <Title style={styles.headerTitle}>Hedeflerim</Title>
+        <View style={styles.headerContent}>
+          <IconButton
+            icon="arrow-left"
+            iconColor="white"
+            size={24}
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+          />
+          <Title style={styles.headerTitle}>My Goals</Title>
+        </View>
       </LinearGradient>
 
       <ScrollView style={styles.content}>
@@ -271,14 +256,14 @@ const GoalsScreen = ({ navigation }) => {
               <View style={styles.summaryContent}>
                 <View style={styles.summaryItem}>
                   <Text style={styles.summaryValue}>{goals.length}</Text>
-                  <Text style={styles.summaryLabel}>Aktif Hedef</Text>
+                  <Text style={styles.summaryLabel}>Active Target</Text>
                 </View>
                 <View style={styles.summaryDivider} />
                 <View style={styles.summaryItem}>
                   <Text style={styles.summaryValue}>
                     {goals.filter(g => g.current <= g.target).length}
                   </Text>
-                  <Text style={styles.summaryLabel}>Başarılı</Text>
+                  <Text style={styles.summaryLabel}>Success</Text>
                 </View>
               </View>
             </Surface>
@@ -295,10 +280,10 @@ const GoalsScreen = ({ navigation }) => {
           </>
         ) : (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Henüz hedef eklenmemiş</Text>
-            <Text style={styles.emptySubText}>
-              Yeni bir hedef eklemek için aşağıdaki butonu kullanın
-            </Text>
+            <Text style={styles.emptyText}>No goals added yet</Text>
+                          <Text style={styles.emptySubText}>
+                Use the button below to add a new goal
+              </Text>
           </View>
         )}
       </ScrollView>
@@ -309,7 +294,7 @@ const GoalsScreen = ({ navigation }) => {
         color="white"
         backgroundColor="#001F3F"
         onPress={() => navigation.navigate('HedefEkle')}
-        label="Hedef Ekle"
+                      label="Add Goal"
       />
 
       <Portal>
@@ -317,25 +302,33 @@ const GoalsScreen = ({ navigation }) => {
           visible={dialogVisible}
           onDismiss={() => setDialogVisible(false)}
         >
-          <Dialog.Title>Yeni Hedef</Dialog.Title>
+          <Dialog.Title>New Goal</Dialog.Title>
           <Dialog.Content>
             <TextInput
-              label="Hedef Başlığı"
+              ref={dialogTitleRef}
+                              label="Goal Title"
               value={newGoal.title}
               onChangeText={text => setNewGoal({...newGoal, title: text})}
               style={styles.input}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              onSubmitEditing={() => dialogTargetRef.current?.focus()}
             />
             <TextInput
-              label="Hedef Tüketim (kWh)"
+              ref={dialogTargetRef}
+              label="Target Consumption (kWh)"
               value={newGoal.target}
               onChangeText={text => setNewGoal({...newGoal, target: text})}
               keyboardType="numeric"
               style={styles.input}
+              returnKeyType="done"
+              blurOnSubmit={true}
+              onSubmitEditing={() => dialogTargetRef.current?.blur()}
             />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)}>İptal</Button>
-            <Button onPress={handleAddGoal}>Ekle</Button>
+            <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
+            <Button onPress={handleAddGoal}>Add</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -352,7 +345,15 @@ const styles = StyleSheet.create({
     height: 120,
     justifyContent: 'flex-end',
     paddingBottom: 16,
-    paddingHorizontal: 16,
+    backgroundColor: '#001F3F',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
+  backButton: {
+    marginRight: 8,
   },
   headerTitle: {
     color: 'white',
@@ -437,15 +438,18 @@ const styles = StyleSheet.create({
     color: '#001F3F',
   },
   progressIndicator: {
-    height: 8,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 4,
+    height: 10,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
     overflow: 'hidden',
     marginVertical: 8,
+    borderWidth: 1,
+    borderColor: '#d0d0d0',
   },
   progressFill: {
     height: '100%',
     borderRadius: 4,
+    minWidth: 4, // Minimum görünür genişlik
   },
   remainingText: {
     fontSize: 12,

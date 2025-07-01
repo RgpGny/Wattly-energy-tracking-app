@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Dimensions, StatusBar, ActivityIndicator } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { TouchableOpacity, StyleSheet, View, Dimensions, StatusBar, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text, TextInput as PaperInput } from 'react-native-paper';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
@@ -16,6 +16,10 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  // Input ref'leri
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
 
   const handleLogin = () => {
     if (!email.value || !password.value) {
@@ -48,84 +52,107 @@ export default function LoginScreen({ navigation }) {
         <MaterialCommunityIcons name="arrow-left" size={24} color="white" />
       </TouchableOpacity>
 
-      <View style={styles.content}>
-        <MotiView
-          from={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', damping: 20 }}
-          style={styles.logoContainer}
+      <KeyboardAvoidingView 
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <AppLogo size="small" />
-          <Text style={styles.welcomeText}>Tekrar Hoşgeldiniz</Text>
-          <Text style={styles.subtitleText}>Hesabınıza giriş yapın</Text>
-        </MotiView>
+          <View style={styles.content}>
+            <MotiView
+              from={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: 'spring', damping: 20 }}
+              style={styles.logoContainer}
+            >
+              <AppLogo size="small" />
+              <Text style={styles.welcomeText}>Welcome Back</Text>
+              <Text style={styles.subtitleText}>Sign in to your account</Text>
+            </MotiView>
 
-        <View style={styles.formContainer}>
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="email-outline" size={24} color="#666" style={styles.inputIcon} />
-            <PaperInput
-              mode="flat"
-              placeholder="E-posta"
-              value={email.value}
-              onChangeText={(text) => setEmail({ value: text, error: '' })}
-              error={!!email.error}
-              style={styles.input}
-              underlineColor="transparent"
-              activeUnderlineColor="#001F3F"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="lock-outline" size={24} color="#666" style={styles.inputIcon} />
-            <PaperInput
-              mode="flat"
-              placeholder="Şifre"
-              value={password.value}
-              onChangeText={(text) => setPassword({ value: text, error: '' })}
-              error={!!password.error}
-              style={styles.input}
-              secureTextEntry={secureTextEntry}
-              underlineColor="transparent"
-              activeUnderlineColor="#001F3F"
-              right={
-                <PaperInput.Icon
-                  name={secureTextEntry ? "eye-off" : "eye"}
-                  onPress={() => setSecureTextEntry(!secureTextEntry)}
-                  color="#666"
+            <View style={styles.formContainer}>
+              <View style={styles.inputContainer}>
+                <MaterialCommunityIcons name="email-outline" size={24} color="#666" style={styles.inputIcon} />
+                <PaperInput
+                  ref={emailRef}
+                  mode="flat"
+                  placeholder="Email"
+                  value={email.value}
+                  onChangeText={(text) => setEmail({ value: text, error: '' })}
+                  error={!!email.error}
+                  style={styles.input}
+                  underlineColor="transparent"
+                  activeUnderlineColor="#001F3F"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  returnKeyType="next"
+                  blurOnSubmit={false}
+                  onSubmitEditing={() => passwordRef.current?.focus()}
                 />
-              }
-            />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <MaterialCommunityIcons name="lock-outline" size={24} color="#666" style={styles.inputIcon} />
+                <PaperInput
+                  ref={passwordRef}
+                  mode="flat"
+                  placeholder="Password"
+                  value={password.value}
+                  onChangeText={(text) => setPassword({ value: text, error: '' })}
+                  error={!!password.error}
+                  style={styles.input}
+                  secureTextEntry={secureTextEntry}
+                  underlineColor="transparent"
+                  activeUnderlineColor="#001F3F"
+                  returnKeyType="done"
+                  blurOnSubmit={true}
+                  onSubmitEditing={() => {
+                    passwordRef.current?.blur();
+                    // İsteğe bağlı: Otomatik giriş
+                    // handleLogin();
+                  }}
+                  right={
+                    <PaperInput.Icon
+                      name={secureTextEntry ? "eye-off" : "eye"}
+                      onPress={() => setSecureTextEntry(!secureTextEntry)}
+                      color="#666"
+                    />
+                  }
+                />
+              </View>
+
+              <TouchableOpacity 
+                style={styles.forgotPassword}
+                onPress={() => navigation.navigate('ResetPassword')}
+              >
+                <Text style={styles.forgotPasswordText}>Forgot Password</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.loginButton, loading && styles.loadingButton]}
+                onPress={handleLogin}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text style={styles.loginButtonText}>Login</Text>
+                )}
+              </TouchableOpacity>
+
+              <View style={styles.registerContainer}>
+                <Text style={styles.registerText}>Don't have an account? </Text>
+                <TouchableOpacity onPress={() => navigation.replace('Register')}>
+                  <Text style={styles.registerLink}>Sign Up</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-
-          <TouchableOpacity 
-            style={styles.forgotPassword}
-            onPress={() => navigation.navigate('ResetPassword')}
-          >
-            <Text style={styles.forgotPasswordText}>Şifremi Unuttum</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.loginButton, loading && styles.loadingButton]}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text style={styles.loginButtonText}>Giriş Yap</Text>
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Hesabınız yok mu? </Text>
-            <TouchableOpacity onPress={() => navigation.replace('Register')}>
-              <Text style={styles.registerLink}>Kayıt Ol</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 }
@@ -134,19 +161,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
   backButton: {
     position: 'absolute',
-    top: 40,
+    top: 50,
     left: 20,
     zIndex: 1,
+    padding: 8,
   },
   content: {
     flex: 1,
     justifyContent: 'flex-end',
+    minHeight: height,
   },
   logoContainer: {
     alignItems: 'center',
     marginBottom: 30,
+    paddingTop: 100,
   },
   welcomeText: {
     fontSize: 28,
@@ -165,7 +201,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 24,
     paddingTop: 32,
-    paddingBottom: 24,
+    paddingBottom: 40,
     elevation: 8,
   },
   inputContainer: {
@@ -214,6 +250,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 20,
   },
   registerText: {
     color: '#666',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, StyleSheet, Dimensions, StatusBar } from 'react-native';
 import { 
   TextInput, 
@@ -12,7 +12,6 @@ import {
   Card
 } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
-import NavigationButtons from '../components/NavigationButtons';
 import { auth, db } from '../firebaseConfig';
 import { ref, set, push, get, update } from 'firebase/database';
 import { saveCihaz, updateCihaz } from '../services/firebaseService';
@@ -20,17 +19,17 @@ import { saveCihaz, updateCihaz } from '../services/firebaseService';
 const { width } = Dimensions.get('window');
 
 const deviceTypes = [
-  { value: 'Beyaz Eşya', icon: 'washing-machine' },
-  { value: 'Elektronik', icon: 'television' },
-  { value: 'Aydınlatma', icon: 'lightbulb' },
-  { value: 'Isıtma/Soğutma', icon: 'thermometer' },
+  { value: 'Home Appliances', icon: 'washing-machine' },
+  { value: 'Electronics', icon: 'television' },
+  { value: 'Lighting', icon: 'lightbulb' },
+  { value: 'Heating/Cooling', icon: 'thermometer' },
 ];
 
 const CihazEkleScreen = ({ navigation, route }) => {
   const editingDevice = route.params?.device;
   const [device, setDevice] = useState({
     name: '',
-    type: 'Beyaz Eşya',
+    type: 'Home Appliances',
     guc: '',
     dailyUsage: '',
     active: true,
@@ -38,12 +37,17 @@ const CihazEkleScreen = ({ navigation, route }) => {
   });
 
   const [errors, setErrors] = useState({});
+  
+  // Input ref'leri
+  const nameRef = useRef(null);
+  const powerRef = useRef(null);
+  const usageRef = useRef(null);
 
   const validateForm = () => {
     const newErrors = {};
-    if (!device.name.trim()) newErrors.name = 'Cihaz adı gerekli';
-    if (!device.guc) newErrors.guc = 'Güç tüketimi gerekli';
-    if (!device.dailyUsage) newErrors.dailyUsage = 'Günlük kullanım süresi gerekli';
+    if (!device.name.trim()) newErrors.name = 'Device name is required';
+    if (!device.guc) newErrors.guc = 'Power consumption is required';
+    if (!device.dailyUsage) newErrors.dailyUsage = 'Daily usage duration is required';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -87,27 +91,40 @@ const CihazEkleScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <NavigationButtons navigation={navigation} />
+      <StatusBar barStyle="light-content" backgroundColor="#001F3F" />
       
       <LinearGradient
         colors={['#001F3F', '#002c5c']}
         style={styles.header}
       >
-        <Title style={styles.headerTitle}>
-          {editingDevice ? 'Cihazı Düzenle' : 'Yeni Cihaz Ekle'}
-        </Title>
+        <View style={styles.headerContent}>
+          <IconButton
+            icon="arrow-left"
+            iconColor="white"
+            size={24}
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+          />
+          <Title style={styles.headerTitle}>
+            {editingDevice ? 'Edit Device' : 'Add New Device'}
+          </Title>
+        </View>
       </LinearGradient>
 
       <ScrollView style={styles.content}>
         <Surface style={styles.formCard}>
-          <Title style={styles.formTitle}>Cihaz Bilgileri</Title>
+          <Title style={styles.formTitle}>Device Information</Title>
           
           <TextInput
-            label="Cihaz Adı"
+            ref={nameRef}
+            label="Device Name"
             value={device.name}
             onChangeText={(text) => setDevice({ ...device, name: text })}
             style={styles.input}
             error={!!errors.name}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => powerRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -118,7 +135,7 @@ const CihazEkleScreen = ({ navigation, route }) => {
             {errors.name}
           </HelperText>
 
-          <Title style={styles.sectionTitle}>Cihaz Tipi</Title>
+          <Title style={styles.sectionTitle}>Device Type</Title>
           <SegmentedButtons
             value={device.type}
             onValueChange={(value) => setDevice({ ...device, type: value })}
@@ -131,12 +148,16 @@ const CihazEkleScreen = ({ navigation, route }) => {
           />
 
           <TextInput
-            label="Güç Tüketimi (Watt)"
+            ref={powerRef}
+            label="Power Consumption (Watts)"
             value={device.guc?.toString()}
             onChangeText={(text) => setDevice({ ...device, guc: text })}
             keyboardType="numeric"
             style={styles.input}
             error={!!errors.guc}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            onSubmitEditing={() => usageRef.current?.focus()}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -148,12 +169,20 @@ const CihazEkleScreen = ({ navigation, route }) => {
           </HelperText>
 
           <TextInput
-            label="Günlük Kullanım (Saat)"
+            ref={usageRef}
+            label="Daily Usage (Hours)"
             value={device.dailyUsage?.toString()}
             onChangeText={(text) => setDevice({ ...device, dailyUsage: text })}
             keyboardType="numeric"
             style={styles.input}
             error={!!errors.dailyUsage}
+            returnKeyType="done"
+            blurOnSubmit={true}
+            onSubmitEditing={() => {
+              usageRef.current?.blur();
+              // İsteğe bağlı: Otomatik kaydet
+              // handleSave();
+            }}
             theme={{
               colors: {
                 primary: '#001F3F',
@@ -167,12 +196,12 @@ const CihazEkleScreen = ({ navigation, route }) => {
 
         <Card style={styles.consumptionCard}>
           <Card.Content>
-            <Title style={styles.consumptionTitle}>Tüketim Özeti</Title>
+            <Title style={styles.consumptionTitle}>Consumption Summary</Title>
             
             <View style={styles.consumptionItem}>
               <IconButton icon="flash" size={24} color="#6200ee" />
               <View style={styles.consumptionInfo}>
-                <Text style={styles.consumptionLabel}>Günlük Tüketim</Text>
+                <Text style={styles.consumptionLabel}>Daily Consumption</Text>
                 <Text style={styles.consumptionValue}>
                   {calculateDailyConsumption()} kWh
                 </Text>
@@ -182,7 +211,7 @@ const CihazEkleScreen = ({ navigation, route }) => {
             <View style={styles.consumptionItem}>
               <IconButton icon="currency-try" size={24} color="#03dac6" />
               <View style={styles.consumptionInfo}>
-                <Text style={styles.consumptionLabel}>Tahmini Aylık Maliyet</Text>
+                <Text style={styles.consumptionLabel}>Estimated Monthly Cost</Text>
                 <Text style={styles.consumptionValue}>
                   {calculateMonthlyCost()} ₺
                 </Text>
@@ -198,7 +227,7 @@ const CihazEkleScreen = ({ navigation, route }) => {
             style={styles.saveButton}
             buttonColor="#001F3F"
           >
-            {editingDevice ? 'Güncelle' : 'Kaydet'}
+                          {editingDevice ? 'Update' : 'Save'}
           </Button>
         </View>
       </ScrollView>
@@ -215,8 +244,15 @@ const styles = StyleSheet.create({
     height: 120,
     justifyContent: 'flex-end',
     paddingBottom: 16,
-    paddingHorizontal: 16,
     backgroundColor: '#001F3F',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
+  backButton: {
+    marginRight: 8,
   },
   headerTitle: {
     color: 'white',
