@@ -210,7 +210,6 @@ npm start
 <div align="center">
   <img src="src/assets/screenshots/home.jpg" width="200" alt="Home Screen" />
   <img src="src/assets/screenshots/energy-tracking.jpg" width="200" alt="Energy Tracking" />
-  <img src="src/assets/screenshots/profile.jpg" width="200" alt="Profile Screen" />
 </div>
 
 ### 📱 Device Management
@@ -227,6 +226,7 @@ npm start
 
 ### ⚙️ Settings
 <div align="center">
+  <img src="src/assets/screenshots/profile.jpg" width="200" alt="Profile Screen" />
   <img src="src/assets/screenshots/change-password.jpg" width="200" alt="Change Password" />
 </div>
 
