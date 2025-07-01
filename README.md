@@ -201,28 +201,28 @@ npm start
 
 ### 🔐 Authentication & Welcome
 <div align="center">
-  <img src="src/assets/screenshots/01-welcome.jpg" width="200" alt="Welcome Screen" />
-  <img src="src/assets/screenshots/02-login.jpg" width="200" alt="Login Screen" />
-  <img src="src/assets/screenshots/03-register.jpg" width="200" alt="Register Screen" />
+  <img src="src/assets/screenshots/welcome.jpg" width="200" alt="Welcome Screen" />
+  <img src="src/assets/screenshots/login.jpg" width="200" alt="Login Screen" />
+  <img src="src/assets/screenshots/register.jpg" width="200" alt="Register Screen" />
 </div>
 
 ### 🏠 Main Screens
 <div align="center">
-  <img src="src/assets/screenshots/04-home.jpg" width="200" alt="Home Screen" />
-  <img src="src/assets/screenshots/07-energy-tracking.jpg" width="200" alt="Energy Tracking" />
-  <img src="src/assets/screenshots/10-profile.jpg" width="200" alt="Profile Screen" />
+  <img src="src/assets/screenshots/home.jpg" width="200" alt="Home Screen" />
+  <img src="src/assets/screenshots/energy-tracking.jpg" width="200" alt="Energy Tracking" />
+  <img src="src/assets/screenshots/profile.jpg" width="200" alt="Profile Screen" />
 </div>
 
 ### 📱 Device Management
 <div align="center">
-  <img src="src/assets/screenshots/05-devices.jpg" width="200" alt="Device List" />
-  <img src="src/assets/screenshots/06-add-device.jpg" width="200" alt="Add Device" />
+  <img src="src/assets/screenshots/devices.jpg" width="200" alt="Device List" />
+  <img src="src/assets/screenshots/add-device.jpg" width="200" alt="Add Device" />
 </div>
 
 ### 🎯 Goal Management
 <div align="center">
-  <img src="src/assets/screenshots/08-goals.jpg" width="200" alt="Goals Screen" />
-  <img src="src/assets/screenshots/09-add-goal.jpg" width="200" alt="Add Goal" />
+  <img src="src/assets/screenshots/goals.jpg" width="200" alt="Goals Screen" />
+  <img src="src/assets/screenshots/add-goal.jpg" width="200" alt="Add Goal" />
 </div>
 
 ### ⚙️ Settings

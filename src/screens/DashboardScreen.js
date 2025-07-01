@@ -101,7 +101,7 @@ const DashboardScreen = ({ navigation }) => {
 
   // Period'a göre basit hesaplamalar
     const getPeriodMultiplier = (period) => {
-    switch(period) {
+      switch(period) {
       case 'Daily': return 1;
       case 'Weekly': return 7;
       case 'Monthly': return 30;
