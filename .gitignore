@@ -1,0 +1,16 @@
+# Node.js
+node_modules/
+
+# Çevresel değişkenler
+env/
+.env
+.env.*
+
+# Firebase ve hassas dosyalar
+src/firebaseConfig.js
+google-services.json
+
+# Diğer yaygın dışlanacaklar
+.DS_Store
+.expo/
+.vscode/ 
