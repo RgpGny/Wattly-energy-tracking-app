@@ -227,19 +227,7 @@ npm start
 
 ### ⚙️ Settings
 <div align="center">
-  <img src="src/assets/screenshots/11-change-password.jpg" width="200" alt="Change Password" />
-</div>
-
-<div align="center">
-
-| Home Screen | Dashboard | Device List |
-|-------------|-----------|-------------|
-| ![Home Screen](assets/screenshots/home.png) | ![Dashboard](assets/screenshots/dashboard.png) | ![Device List](assets/screenshots/devices.png) |
-
-| Login | Profile | Goals |
-|-------|---------|-------|
-| ![Login](assets/screenshots/login.png) | ![Profile](assets/screenshots/profile.png) | ![Goals](assets/screenshots/goals.png) |
-
+  <img src="src/assets/screenshots/change-password.jpg" width="200" alt="Change Password" />
 </div>
 
 ---
