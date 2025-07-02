@@ -5,7 +5,7 @@ Track your usage, reduce your footprint, and connect with others! 🌱📱
 
 ---
 
-> 🔀 **To explore the project, please switch to the `dev` branch.**
+> 🔀 **Please go to the' dev' branch for project codes, detailed information, and screenshots.**
 
 ```bash
 git checkout dev
